@@ -62,7 +62,7 @@ public class Map {
 		r = new Room(11, "Elevator", "Alright, seems I can only go up.",0,0,0,3,12,0, false,0);
 		roomMap.add(r);
 		
-		r = new Room(12, "Elevator", "Level 3: Up or down. The door is to the W.",0,0,0,16,13,11, false,0);
+		r = new Room(12, "Elevator", "Level 3: Up or down. The door is to the W.",0,0,0,17,13,11, false,0);
 		roomMap.add(r);
 
 		r = new Room(13, "Elevator", "Level 4: Up or down. The door is to the W.",0,0,0,20,14,12, false,0);

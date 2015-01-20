@@ -98,7 +98,7 @@ public class UI {
 					break;
 
 				case "forge":
-					if(smith.roomNum==11){ // you can only forge in the forge room!
+					if(smith.roomNum==10){ // you can only forge in the forge room!
 						if(smith.hasItem("time watch")){ //plot
 							smith.consume(this, "forge consume");
 							smith.addItem("vortex watch", "Very dashing Hollywood watch", 0, "It taste like the melancholy of never be able to go home.");
