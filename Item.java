@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class Item{
 	String name;
-	String ld;
-	int powerEnergy;
-	String td;
+	String ld; //long describtion
+	int powerEnergy; 
+	String td; //taste describtion
 	
 	
 	Item(String name, String ld, int powerEnergy, String td){

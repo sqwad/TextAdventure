@@ -1,85 +1,28 @@
 //package random;
 import java.util.*;
+import java.text.SimpleDateFormat;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class Player {
 	
 	String name = "?"; //Player's name
-	int health = 100; //Player's health
+	//int health = 100; //Player's health, not used in the game
 	int roomNum = 5; //Current point
 	int energy = 30; //BEAST
+	Scanner keyb = new Scanner(System.in);
 	
-	
-	List<Item> inventory = new ArrayList<Item>(); //items in the room
-	
-	
+	private List<Item> inventory = new ArrayList<Item>(); //items carried by the player 
 	
 	Player(String name){
 		this.name = name;
 	}
-	/*
-	void talkTo(String creature){
-		//System.out.println(creature.dialogue()); //Not sure where dialogue needs to go
-		//Prompts a question from a character, could have to answer yes or no, or
-		//show an object to get them to talk
-	}
-	*/
 
-	/*
-	void putDown(Map map, Item item){
-		if(inventory.contains(item)){
-			inventory.remove(item);
-			map.getRoomByIndex(roomNum).items.add(item);
-			System.out.print("You have dropped "+item.name+"!");
-			return;
-		}
-		System.out.print("Hmm something is not right here..");
-	}
-	
-	void attack(String creature, int creatureHealth, int damageValue, int weaponVal){
-		int rand = (int) Math.random() * 5 + 1;
-		damageValue = rand * weaponVal;
-		//Enemy's health goes down by rand (between 1 and 5), multiplied by weapon
-		creatureHealth = creatureHealth - damageValue;
-		//Fists is 1, Knife is 1.1, Sword is 1.25, etc. 
-	}
-	
-	void getDamaged(String creature){
-		int rand = (int) Math.random() * 50 + 1; 
-		//Damages between 1 and 50, could change for specific creatures 
-		health = health - rand;
-	}
-	*/
-	//this will be in the item class
-/*	String lookAt(String object){
-		return object;//.description(); //Returns description of object
-		//Must be in the room or inventory
-	}
-*/	
-	//IMPORTANT
-
-	
-		
-	/*
-	void walk(String direction, int roomNum){
-		boolean isPossible = true;
-		direction.toLowerCase();
-		if(direction == "north" && isPossible == true){
-			//roomNum++;
-		} else if(direction == "south" && isPossible == true) {
-			//roomNum--;
-		} else if(direction == "east" && isPossible == true) {
-			//map[x]++; //Somehow set for east and west
-		} else if(direction == "west" && isPossible == true) {
-			//map[x]--; //Same as above
-		} else {
-			System.out.println("That is not a valid direction.");
-		}
-		//Moves on the x or y axis of the map
-	}*/
-
-	boolean walk(char direction, Room room, Map map){ //return true if moved
+	void walk(char direction, Room room, Map map){  // move 
 		boolean isMoved=false;
+
 		switch(direction){
-			case 'n': if(room.N!=0) {roomNum=room.N; isMoved=true; System.out.println(map.getRoomByIndex(roomNum).ld);energy--;} break;
+			case 'n': if(room.N!=0) {roomNum=room.N; isMoved=true; System.out.println(map.getRoomByIndex(roomNum).ld);energy--;} break;  //cost a energy point tp move
 			case 's': if(room.S!=0) {roomNum=room.S; isMoved=true; System.out.println(map.getRoomByIndex(roomNum).ld);energy--;} break;
 			case 'w': if(room.W!=0) {roomNum=room.W; isMoved=true; System.out.println(map.getRoomByIndex(roomNum).ld);energy--;} break;
 			case 'e': if(room.E!=0) {roomNum=room.E; isMoved=true; System.out.println(map.getRoomByIndex(roomNum).ld);energy--;} break;
@@ -90,37 +33,81 @@ public class Player {
 		if(!isMoved){
 			System.out.println("You are still at where you are man!");
 		}
-		return isMoved;
 	}
-
-	/*
-	void wear(double healthBonus){
-		//healthBonus must be a double between 1 and 2
-		if(health > 100){
-			health = (int) (100 * healthBonus);
-		} else {
-			health = (int) (health * healthBonus);
-		}
-	}*/
 	
-	public String toString(){
-		String s = String.format("Your name is " + name + ".");
-		return s;
-	}
 
-	void teleport(Map map){
+	void teleport(Map map){ //teleport ya into a random room
 		int maxRoom;
-		//int z = (int)(Math.random()*(100))+1;
+		String command;
+		char getCommand;
 		
-		maxRoom=map.mapSize();
-		
-		
-		roomNum=(int)(Math.random()*(maxRoom-1))+1;
-		System.out.println(map.getRoomByIndex(roomNum).ld);
-		energy-=20; //energy cost
+		if(hasItem("time watch")){
+
+
+			System.out.println("Would you like to jump in time or space?"); //since you have a time watch, you can jump in time
+
+			command=keyb.next();
+			getCommand=command.toLowerCase().charAt(0);
+			if(getCommand=='t'){
+				Calendar cal = Calendar.getInstance(); //get calendar, the current time. Thanks StackOverflow
+		    	cal.getTime();
+		    	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+		    	System.out.println("It's "+sdf.format(cal.getTime())+", yesterday. Strange.");
+		    	energy-=20; //energy cost
+
+
+			}else if(getCommand=='s'){
+				maxRoom=map.mapSize();
+				roomNum=(int)(Math.random()*(maxRoom))+1;
+				System.out.println(map.getRoomByIndex(roomNum).ld);
+				energy-=20; //energy cost
+
+
+			}else{
+				System.out.println("Have you been attending Mr Harwood's physics class to understand what time and space are?"); 
+			}
+
+
+		} else if(hasItem("vortex watch")){
+			if(getItemByName("vortex watch").powerEnergy==0){
+				System.out.println("There's no fomula pluged in.");
+				System.out.print("Vortex Teleport Formula: ");
+				String formula=keyb.nextLine();
+				if(md5(formula).equals("840abcec300e38b42a0bb6ac36e1656f")){
+					getItemByName("vortex watch").powerEnergy=100;
+					System.out.println("Wait, the Vortex is generated!");
+
+				}else{
+					System.out.print("OMG it's the wrong formula! I think the watch is not happy!");
+				}
+
+			}else{
+
+				if((int)(Math.random()*4)+1==1){
+					System.out.print("BACK ON EARTH!!!");
+
+				}else{
+					maxRoom=map.mapSize();
+					roomNum=(int)(Math.random()*(maxRoom))+1;
+					System.out.println(map.getRoomByIndex(roomNum).ld);
+					energy-=20; //energy cost
+					System.out.print("****Science is all about failures sometimes.");
+				}
+
+			}
+
+		}else{
+			maxRoom=map.mapSize();
+			roomNum=(int)(Math.random()*(maxRoom))+1;
+			System.out.println(map.getRoomByIndex(roomNum).ld);
+			energy-=20; //energy cost
+		}
+
+
+		// debug
 	}
 	
-	boolean pushButton(Room room){
+	boolean pushButton(Room room){ //push a button in a room to gain some energy
 		if(!room.hasButton) return false;
 		System.out.println("You pressed the button! You gain " + room.buttonValue + " energy points!");
 		energy += room.buttonValue;
@@ -128,12 +115,12 @@ public class Player {
 		return true;
 	}
 	
-	 void suicide(UI youDed){ 		
-		youDed.isPlaying = false; 	
+	 void suicide(UI youDed){	// ehhh, pretty self-explainitory, you know what I meant
+		youDed.isPlaying = false; 	//no more playing mate
 		System.out.println("YOU ARE DEAD SON!"); 
 	}
 	
-	void pickUp(Map map, String item){
+	void pickUp(Map map, String item){ // get a item add to inventory
 		for(Item itemInRoom: map.getRoomByIndex(roomNum).items){
 			if(itemInRoom.name.equals(item)){
 				inventory.add(itemInRoom);
@@ -145,19 +132,81 @@ public class Player {
 		System.out.println("You did not pick up any more "+item+"s.\n");
 	}
 	
-	void consume(UI ui, String item){
+	void consume(UI ui, String item){ //destory an item from inventory and display the string in item
+		if(item.toLowerCase().equals("forge consume")){  //consume while forging
+				inventory.remove(getItemByName("time watch"));
+				return;
+		}
 		for(Item itemInInventory: inventory){
 			if(itemInInventory.name.equals(item.toLowerCase())){
 				inventory.remove(itemInInventory);
 				System.out.println(itemInInventory.td+"\n");
-				if(item.toLowerCase().equals("telewatch")){
+				if(item.toLowerCase().equals("time watch")||item.toLowerCase().equals("vortex watch")){
 					System.out.println("Over time, you slowly starve to death...");
 					suicide(ui);
 				}
+				energy+=itemInInventory.powerEnergy;
 				return;
 			}
 		}
 		System.out.println("That item doesn't exist in your inventory.");
+	}
+
+	Item getItemByName(String itemName){
+		for(Item item: inventory){
+			if(item.name.equals(itemName)){
+				return item;
+			}
+		}
+		return null;
+	}
+
+
+	boolean hasItem(String itemName){
+		for(Item item: inventory){
+			if(item.name.equals(itemName)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void addItem(String name, String ld, int powerEnergy, String td){
+		inventory.add(new Item(name, ld, powerEnergy, td));
+	}
+
+	public String toString(){ //no usage
+		String s = String.format("Your name is " + name + ".");
+
+		return s;
+	}
+
+
+	void displayInventory(){
+		if(inventory.isEmpty()) System.out.println("Your inventory isEmpty().");
+			for(Item item: inventory){
+				System.out.println(item.name);
+		}
+	}
+
+
+	String md5(String password){  //thx internet
+		try{
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			 md.update(password.getBytes());
+ 
+        	byte byteData[] = md.digest();
+ 
+        	//convert the byte to hex format
+        	StringBuffer sb = new StringBuffer();
+        	for (int i = 0; i < byteData.length; i++) {
+        	 sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+        	}
+        	return sb.toString();
+        }catch(NoSuchAlgorithmException e){
+
+		}
+		return "HUH?";
 	}
 }
 

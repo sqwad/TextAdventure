@@ -26,14 +26,12 @@ public class Room {
 		this.sd= sd; 
 		this.hasButton=hasButton;
 		this.buttonValue=buttonValue;
-		//this.isLit=isLit;
-		//init items here
 	}
 	
 	void look(){
-		System.out.println(ld + "\nHere is a list of all items in the room: ");
+		System.out.println(ld + "\n\nHere is a list of all items in the room: ");
 		for(Item x: items){
-			System.out.println(x.name);
+			System.out.println("\t"+x.name);
 		}
 	}
 	
