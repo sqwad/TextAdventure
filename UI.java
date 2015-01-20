@@ -1,6 +1,7 @@
 //package random;
 
 import java.util.Scanner;
+import java.util.HashMap; 
 
 public class UI {
 
@@ -26,9 +27,13 @@ public class UI {
 		//end debug
 		
 		String command;
-		boolean status=true; //check if moved, plz refer to line 47
-		System.out.println(""); // add a new line
+		HashMap<String, String> dictionary = new HashMap<String, String>();
 
+
+
+
+
+		System.out.println(""); // add a new line
 		System.out.println("Welcome to Will Smith's Wacky World!");
 		System.out.println("HINT: You are "+smith.name+"!");
 		System.out.println(map.getRoomByIndex(smith.roomNum).ld); //get the current room's long describtion
@@ -43,16 +48,22 @@ public class UI {
 			}
 			System.out.println(""); // add a new line
 			System.out.print(smith.name+": "); // cool input line
-			command=keyb.next();
+			command=keyb.nextLine();
 			command = command.toLowerCase();
 			switch(command){ // main game is here
 				case "help": 
 					System.out.println("\nYou can try to type:\n N : walk north \n " +
 					"S : walk south \n E : walk east \n W : walk west \n U : climb up \n D : slide down \n " +
-					"talkto: talk to a character \n pushbutton: push a button \n checkenergy: check energy points \n " +
-					"pickup: pick up an object \n consume: consume an object in your inventory \n teleport: teleport " +
-					"to a random room in the map \n inventory: view inventory contents \n look: look around a room\n");
+					"talk to: talk to a character \n push button: push a button \n check energy: check energy points \n " +
+					"pick up: pick up an object \n consume: consume an object in your inventory \n teleport: teleport " +
+					"to a random room in the map \n inventory: view inventory contents \n look: look around a room");
+					
+					for(String key: dictionary.keySet()){  // takes all the dictionary words to the help
+						System.out.print(" "+key+": Say \""+dictionary.get(key)+"\" back \n");
+					}
+
 					break;
+
 				case "n":
 				case "north":
 				case "south":
@@ -67,8 +78,8 @@ public class UI {
 				case "d": 					
 					smith.walk(command.charAt(0), map.getRoomByIndex(smith.roomNum), map);
 					break;
-				case "pushbutton": smith.pushButton(map.getRoomByIndex(smith.roomNum)); break;
-				case "checkenergy": System.out.print(smith.energy+". "); break;
+				case "push button": smith.pushButton(map.getRoomByIndex(smith.roomNum)); break;
+				case "check energy": System.out.print(smith.energy+". "); break;
 				case "teleport": 
 					smith.teleport(map);
 					break;
@@ -76,15 +87,16 @@ public class UI {
 					if(smith.roomNum==11){
 						
 					}else{
-						System.out.println("NOPE!"); 
+						System.out.println("What are you talking about?"); 
 					}
 					break;
-				case "pickup": 
+				case "pick up": //picking up objects, not classes or girls 
 					smith.pickUp(map,keyb.next().toLowerCase());
 					break;
-				case "consume":
+				case "consume": //that's the proper way to drop a item
 					smith.consume(this, keyb.next().toLowerCase());
 					break;
+				case "i": // alright, Mr Harwood
 				case "inventory":
 					if(smith.inventory.isEmpty()) System.out.println("Your inventory isEmpty().");
 					for(Item item: smith.inventory){
@@ -94,31 +106,38 @@ public class UI {
 				case "look":
 					map.getRoomByIndex(smith.roomNum).look();
 					break;
-				case "suicide": 
+				case "suicide": //a good way to end a boring game
 					smith.suicide(this);
 					
 					//isPlaying=false;
 					break;
-				case "ayy":
-					if(keyb.next().toLowerCase().equals("lmao")){
-						smith.energy++;
-						System.out.println("Your energy points went up by 1!");
-					}else{
-						System.out.println("You mean \"ayy lmao\"? 2 late!");
-						smith.energy--;	
-					}
+				case "ayy lmao": //#random
+					smith.energy++;
+					System.out.println("Your energy points went up by 1!");
 					break;
-				case "talkto":
+				case "talk to":
 					System.out.println("You mumble incomprehensible gibberish. They don't understand you.");
 					break;
 				case "?":
 					System.out.println("What?");
 					break;
-				case "spencersbirthday":
+				case "spencer's birthday":
 					System.out.println("Happy birthday Spencer!");
 					break;
-				default:				
-					System.out.println("NOPE!"); 
+				case "debug":
+					System.out.println("Debug mode is on");
+					while(true){
+						System.out.println("Input: ");
+						command=keyb.nextLine();
+						System.out.println(command);
+					}
+				default:
+					if(dictionary.get(command)!=null){
+						System.out.println(dictionary.get(command));
+					}else{
+						System.out.print("Alright, teach me what should I say: "); 
+						dictionary.put(command, keyb.nextLine());
+					}
 					break;
 			}
 			
